@@ -1154,6 +1154,7 @@
       runoffDone:        '\u2713 Du hast alle deine Runden abgeschlossen!',
       runoffAllDone:     '\uD83C\uDF89 Alle haben gewählt \u2013 Ergebnisse stehen fest!',
       runoffEloTitle:    '\uD83C\uDFC6 Rangliste (Elo)',
+      runoffEloWaiting:  'Die Rangliste wird angezeigt, sobald alle Teilnehmer ihre Runden abgeschlossen haben.',
       modalTitle:        'Neue Stichwahl',
       modalSubtitle:     'Wähle die Namen aus, die gegeneinander antreten sollen.',
       modalSelectAll:    'Alle auswählen',
@@ -1245,6 +1246,7 @@
       runoffDone:        '\u2713 You have completed all your rounds!',
       runoffAllDone:     '\uD83C\uDF89 Everyone has voted \u2013 results are final!',
       runoffEloTitle:    '\uD83C\uDFC6 Leaderboard (Elo)',
+      runoffEloWaiting:  'The leaderboard will appear once all participants have completed their rounds.',
       modalTitle:        'New Runoff',
       modalSubtitle:     'Select the names that should compete against each other.',
       modalSelectAll:    'Select all',
@@ -1892,8 +1894,13 @@
       } else {
         renderVotePair();
       }
-      // ELO leaderboard
-      renderEloLeaderboard(r.elo, r.names);
+      // ELO leaderboard – only visible when everyone is done
+      if (allDone) {
+        renderEloLeaderboard(r.elo, r.names);
+      } else {
+        document.getElementById('runoff-elo-list').innerHTML =
+          `<p style="color:var(--muted);font-size:14px;line-height:1.5">${t('runoffEloWaiting')}</p>`;
+      }
     } catch (e) {
       voteEl.innerHTML = `<div class="empty"><p>${esc(e.message)}</p></div>`;
     }
@@ -1966,22 +1973,20 @@
         const cnt = u === currentUser ? myVotes : (runoffData.votes[u] || []).length;
         return cnt >= res.rounds_required;
       });
-      // Update ELO live
-      renderEloLeaderboard(res.elo, runoffData.names);
       if (allDone) {
         document.getElementById('runoff-vote-section').innerHTML =
           `<div class="vote-section"><div class="vote-done-msg">${t('runoffAllDone')}</div></div>`;
+        renderEloLeaderboard(res.elo, runoffData.names);
       } else if (myVotes >= res.rounds_required) {
-        const pct = 100;
         document.getElementById('runoff-vote-section').innerHTML = `<div class="vote-section">
           <div class="vote-done-msg">${t('runoffDone')}</div>
           <div class="vote-progress-wrap">
             <div class="vote-progress-text">${t('runoffProgress', myVotes, res.rounds_required)}</div>
-            <div class="vote-progress-track"><div class="vote-progress-fill complete" style="width:${pct}%"></div></div>
+            <div class="vote-progress-track"><div class="vote-progress-fill complete" style="width:100%"></div></div>
           </div>
         </div>`;
       } else {
-        setTimeout(() => renderVotePair(), 350);
+        renderVotePair();
       }
     } catch {
       showToast(t('runoffVoteError'));
