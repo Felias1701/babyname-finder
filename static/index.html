@@ -632,6 +632,275 @@
       to   { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
 
+    /* ── RUNOFFS LIST ───────────────────────────────── */
+    .runoffs-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 18px;
+    }
+
+    .runoff-new-btn {
+      padding: 9px 16px; border-radius: 10px; border: none;
+      background: var(--terra); color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: background 0.18s, transform 0.18s; white-space: nowrap;
+    }
+    .runoff-new-btn:hover { background: #A84F2A; transform: translateY(-1px); }
+
+    .runoff-card {
+      background: var(--card); border-radius: var(--r);
+      padding: 16px 20px; margin-bottom: 10px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--blue);
+      cursor: pointer; transition: box-shadow 0.18s, transform 0.18s;
+    }
+    .runoff-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .runoff-card.completed { border-left-color: #4CAF50; }
+    .runoff-card.active    { border-left-color: var(--apricot); }
+
+    .runoff-card-top {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 8px;
+    }
+
+    .runoff-card-title {
+      font-family: 'Comfortaa', cursive;
+      font-size: 17px; font-weight: 700; color: var(--text);
+    }
+
+    .runoff-status-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .runoff-status-badge.active    { background: #FFF0D4; color: #B35A00; }
+    .runoff-status-badge.completed { background: #D4EDDA; color: #1A6B31; }
+
+    .runoff-card-meta {
+      font-size: 13px; color: var(--muted); margin-bottom: 10px;
+    }
+
+    .runoff-progress-bars { display: flex; flex-direction: column; gap: 5px; }
+
+    .runoff-user-progress {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--muted);
+    }
+
+    .runoff-user-progress span { min-width: 60px; }
+
+    .progress-bar-track {
+      flex: 1; height: 6px; background: #E8E0D8;
+      border-radius: 3px; overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%; border-radius: 3px;
+      background: var(--blue); transition: width 0.4s ease;
+    }
+    .progress-bar-fill.done { background: #4CAF50; }
+
+    .progress-label { font-size: 11px; color: var(--muted); min-width: 36px; text-align: right; }
+
+    /* ── RUNOFF DETAIL / VOTING ─────────────────────── */
+    .runoff-back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: none; font-size: 13px; color: var(--muted);
+      cursor: pointer; margin-bottom: 18px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .runoff-back-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    .runoff-detail-header { margin-bottom: 20px; }
+
+    .runoff-detail-title {
+      font-family: 'Comfortaa', cursive;
+      font-size: 22px; font-weight: 700; color: var(--blue-dark);
+    }
+
+    .runoff-detail-meta { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    .vote-section {
+      background: var(--card); border-radius: var(--r);
+      padding: 24px 20px; margin-bottom: 18px;
+      box-shadow: var(--shadow); text-align: center;
+    }
+
+    .vote-prompt {
+      font-family: 'Comfortaa', cursive;
+      font-size: 17px; font-weight: 600;
+      color: var(--blue-dark); margin-bottom: 20px;
+    }
+
+    .vote-pair {
+      display: flex; gap: 12px; justify-content: center; margin-bottom: 18px;
+    }
+
+    .vote-name-btn {
+      flex: 1; max-width: 200px;
+      padding: 22px 16px;
+      border-radius: 16px; border: 2px solid var(--border);
+      background: var(--card);
+      font-family: 'Comfortaa', cursive;
+      font-size: 22px; font-weight: 700; color: var(--text);
+      cursor: pointer; text-align: center;
+      transition: border-color 0.18s, background 0.18s, transform 0.18s, box-shadow 0.18s;
+      line-height: 1.2;
+    }
+    .vote-name-btn:hover {
+      border-color: var(--apricot); background: var(--apricot-lt);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(196,98,58,0.2);
+    }
+    .vote-name-btn:active { transform: scale(0.97); }
+    .vote-name-btn.voted-winner {
+      border-color: #4CAF50; background: #F1FFF3; color: #1A6B31;
+      animation: vote-pop 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    @keyframes vote-pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .vote-progress-wrap { margin-top: 6px; }
+
+    .vote-progress-text {
+      font-size: 13px; color: var(--muted); margin-bottom: 8px;
+    }
+
+    .vote-progress-track {
+      height: 8px; background: #E8E0D8; border-radius: 4px; overflow: hidden;
+    }
+
+    .vote-progress-fill {
+      height: 100%; background: var(--blue); border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    .vote-progress-fill.complete { background: #4CAF50; }
+
+    .vote-done-msg {
+      text-align: center; padding: 20px;
+      font-family: 'Comfortaa', cursive;
+      font-size: 18px; color: #1A6B31; font-weight: 700;
+    }
+
+    /* ── ELO LEADERBOARD ────────────────────────────── */
+    .elo-section { margin-top: 18px; }
+
+    .elo-section-title {
+      font-family: 'Comfortaa', cursive;
+      font-size: 18px; font-weight: 700;
+      color: var(--blue-dark); margin-bottom: 12px;
+    }
+
+    .elo-card {
+      background: var(--card); border-radius: var(--r);
+      padding: 14px 18px; margin-bottom: 8px;
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .elo-rank {
+      font-family: 'Comfortaa', cursive;
+      font-size: 22px; font-weight: 700;
+      color: var(--muted); min-width: 36px; text-align: center;
+    }
+    .elo-rank.rank-1 { color: #F4C430; }
+    .elo-rank.rank-2 { color: #C0C0C0; }
+    .elo-rank.rank-3 { color: #CD7F32; }
+
+    .elo-name {
+      font-family: 'Comfortaa', cursive;
+      font-size: 20px; font-weight: 700; color: var(--text); flex: 1;
+    }
+
+    .elo-score {
+      font-size: 13px; color: var(--muted); text-align: right;
+    }
+
+    /* ── CREATE RUNOFF MODAL ─────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200; display: flex;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+
+    .modal-box {
+      background: var(--card); border-radius: 24px;
+      padding: 28px 24px; max-width: 420px; width: 100%;
+      max-height: 80vh; display: flex; flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      animation: float-in 0.3s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .modal-title {
+      font-family: 'Comfortaa', cursive;
+      font-size: 20px; font-weight: 700;
+      color: var(--blue-dark); margin-bottom: 6px;
+    }
+
+    .modal-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+    .modal-select-all {
+      font-size: 13px; color: var(--blue); cursor: pointer;
+      background: none; border: none; padding: 0;
+      margin-bottom: 12px; text-align: left;
+      text-decoration: underline;
+    }
+
+    .modal-name-list {
+      overflow-y: auto; flex: 1;
+      display: flex; flex-direction: column; gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .modal-name-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      border: 2px solid var(--border); cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      font-family: 'Comfortaa', cursive;
+      font-size: 17px; font-weight: 600; color: var(--text);
+      user-select: none;
+    }
+    .modal-name-item:hover { border-color: var(--blue); }
+    .modal-name-item.selected { border-color: var(--blue); background: var(--blue-light); }
+
+    .modal-name-check {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--blue); display: flex; align-items: center;
+      justify-content: center; color: #fff; font-size: 13px;
+      opacity: 0; transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+    .modal-name-item.selected .modal-name-check { opacity: 1; }
+
+    .modal-footer { display: flex; gap: 10px; }
+
+    .modal-cancel-btn {
+      flex: 1; padding: 14px;
+      border-radius: 10px; border: 2px solid var(--border);
+      background: none; font-size: 15px; font-weight: 600;
+      color: var(--muted); cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .modal-cancel-btn:hover { border-color: var(--text); color: var(--text); }
+
+    .modal-confirm-btn {
+      flex: 2; padding: 14px;
+      border-radius: 10px; border: none;
+      background: var(--terra); color: #fff;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: background 0.18s;
+    }
+    .modal-confirm-btn:hover { background: #A84F2A; }
+    .modal-confirm-btn:disabled { opacity: 0.5; cursor: default; }
+
     /* ── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 420px) {
       .start-card { padding: 36px 24px 32px; }
@@ -639,6 +908,7 @@
       .name-text { font-size: 18px; }
       .result-name { font-size: 20px; }
       .nav-user { font-size: 12px; }
+      .vote-name-btn { font-size: 18px; padding: 18px 12px; }
     }
   </style>
 </head>
@@ -694,6 +964,7 @@
       <button class="nav-tab active" data-mode="rate" id="nav-tab-rate"></button>
       <button class="nav-tab" data-mode="results" id="nav-tab-results"></button>
       <button class="nav-tab" data-mode="ideas" id="nav-tab-ideas"></button>
+      <button class="nav-tab" data-mode="runoffs" id="nav-tab-runoffs"></button>
     </div>
     <button class="nav-settings" id="edit-btn">⚙️</button>
     <button class="nav-settings" id="lang-toggle-btn" style="font-size:22px"></button>
@@ -731,6 +1002,43 @@
     <textarea class="names-textarea" id="names-input"></textarea>
     <button class="save-btn" id="save-names-btn"></button>
     <div class="save-msg" id="save-msg"></div>
+  </div>
+
+  <!-- Runoffs list -->
+  <div id="mode-runoffs" class="content" style="display:none">
+    <div class="runoffs-header">
+      <h2 class="section-title" id="runoffs-title" style="margin-bottom:0"></h2>
+      <button class="runoff-new-btn" id="runoff-new-btn"></button>
+    </div>
+    <div id="runoffs-list"></div>
+  </div>
+
+  <!-- Runoff detail / voting -->
+  <div id="mode-runoff" class="content" style="display:none">
+    <button class="runoff-back-btn" id="runoff-back-btn">← <span id="runoff-back-label"></span></button>
+    <div class="runoff-detail-header">
+      <div class="runoff-detail-title" id="runoff-detail-title"></div>
+      <div class="runoff-detail-meta" id="runoff-detail-meta"></div>
+    </div>
+    <div id="runoff-vote-section"></div>
+    <div class="elo-section">
+      <div class="elo-section-title" id="runoff-elo-title"></div>
+      <div id="runoff-elo-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Create runoff modal -->
+<div class="modal-overlay" id="runoff-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-subtitle" id="modal-subtitle"></div>
+    <button class="modal-select-all" id="modal-select-all"></button>
+    <div class="modal-name-list" id="modal-name-list"></div>
+    <div class="modal-footer">
+      <button class="modal-cancel-btn" id="modal-cancel-btn"></button>
+      <button class="modal-confirm-btn" id="modal-confirm-btn" disabled></button>
+    </div>
   </div>
 </div>
 
@@ -800,6 +1108,32 @@
       addToast:          (n) => `"${n}" hinzugefügt \u2713`,
       addError:          'Fehler beim Hinzufügen',
       saveRatingError:   'Fehler beim Speichern \u26A0\uFE0F',
+      // Runoffs
+      navRunoffs:        '\uD83C\uDFC6 Stichwahl',
+      runoffsTitle:      'Stichwahlen',
+      runoffNewBtn:      '+ Neue Stichwahl',
+      runoffActive:      'Laufend',
+      runoffCompleted:   'Abgeschlossen',
+      runoffCardMeta:    (n) => `${n} Namen`,
+      runoffEmptyTitle:  'Noch keine Stichwahlen',
+      runoffEmptyDesc:   'Starte eine Stichwahl aus der Ergebnisliste oder über den Button oben.',
+      runoffBackLabel:   'Alle Stichwahlen',
+      runoffDetailMeta:  (n, rq) => `${n} Namen · ${rq} Runden pro Person`,
+      runoffVotePrompt:  'Welcher Name gefällt dir besser?',
+      runoffProgress:    (done, total) => `${done} von ${total} Runden abgeschlossen`,
+      runoffDone:        '\u2713 Du hast alle deine Runden abgeschlossen!',
+      runoffAllDone:     '\uD83C\uDF89 Alle haben gewählt \u2013 Ergebnisse stehen fest!',
+      runoffEloTitle:    '\uD83C\uDFC6 Rangliste (Elo)',
+      modalTitle:        'Neue Stichwahl',
+      modalSubtitle:     'Wähle die Namen aus, die gegeneinander antreten sollen.',
+      modalSelectAll:    'Alle auswählen',
+      modalDeselectAll:  'Alle abwählen',
+      modalCancel:       'Abbrechen',
+      modalConfirm:      (n) => `Stichwahl mit ${n} Namen starten`,
+      modalMinError:     'Bitte mindestens 2 Namen auswählen.',
+      runoffCreateError: 'Fehler beim Erstellen',
+      runoffVoteError:   'Fehler beim Speichern der Wahl',
+      runoffStartBtn:    'Stichwahl starten',
     },
     en: {
       // Setup
@@ -864,6 +1198,32 @@
       addToast:          (n) => `"${n}" added \u2713`,
       addError:          'Error adding name',
       saveRatingError:   'Error saving \u26A0\uFE0F',
+      // Runoffs
+      navRunoffs:        '\uD83C\uDFC6 Runoff',
+      runoffsTitle:      'Runoffs',
+      runoffNewBtn:      '+ New Runoff',
+      runoffActive:      'Active',
+      runoffCompleted:   'Completed',
+      runoffCardMeta:    (n) => `${n} names`,
+      runoffEmptyTitle:  'No runoffs yet',
+      runoffEmptyDesc:   'Start a runoff from the results list or with the button above.',
+      runoffBackLabel:   'All Runoffs',
+      runoffDetailMeta:  (n, rq) => `${n} names · ${rq} rounds per person`,
+      runoffVotePrompt:  'Which name do you prefer?',
+      runoffProgress:    (done, total) => `${done} of ${total} rounds completed`,
+      runoffDone:        '\u2713 You have completed all your rounds!',
+      runoffAllDone:     '\uD83C\uDF89 Everyone has voted \u2013 results are final!',
+      runoffEloTitle:    '\uD83C\uDFC6 Leaderboard (Elo)',
+      modalTitle:        'New Runoff',
+      modalSubtitle:     'Select the names that should compete against each other.',
+      modalSelectAll:    'Select all',
+      modalDeselectAll:  'Deselect all',
+      modalCancel:       'Cancel',
+      modalConfirm:      (n) => `Start runoff with ${n} names`,
+      modalMinError:     'Please select at least 2 names.',
+      runoffCreateError: 'Error creating runoff',
+      runoffVoteError:   'Error saving vote',
+      runoffStartBtn:    'Start runoff',
     },
   };
 
@@ -916,6 +1276,16 @@
     document.getElementById('edit-desc').textContent          = t('editDesc');
     document.getElementById('names-input').placeholder        = t('editPlaceholder');
     document.getElementById('save-names-btn').textContent     = t('editSaveBtn');
+    // Runoffs
+    document.getElementById('nav-tab-runoffs').textContent    = t('navRunoffs');
+    document.getElementById('runoffs-title').textContent      = t('runoffsTitle');
+    document.getElementById('runoff-new-btn').textContent     = t('runoffNewBtn');
+    document.getElementById('runoff-back-label').textContent  = t('runoffBackLabel');
+    document.getElementById('runoff-elo-title').textContent   = t('runoffEloTitle');
+    document.getElementById('modal-title').textContent        = t('modalTitle');
+    document.getElementById('modal-subtitle').textContent     = t('modalSubtitle');
+    document.getElementById('modal-cancel-btn').textContent   = t('modalCancel');
+    document.getElementById('modal-select-all').textContent   = t('modalSelectAll');
     // Setup input placeholders (if visible)
     document.querySelectorAll('.setup-name-input').forEach((inp, i) => {
       inp.placeholder = t('setupNamePh', i + 1);
@@ -927,15 +1297,21 @@
   }
 
   // ── STATE ────────────────────────────────────────────────────────
-  let currentUser  = null;
-  let currentMode  = 'rate';
-  let names        = [];
-  let myRatings    = {};
-  let ideasCache   = null;
-  let ideasLoading = false;
+  let currentUser    = null;
+  let currentMode    = 'rate';
+  let names          = [];
+  let serverNewNames = new Set();
+  let myRatings      = {};
+  let ideasCache     = null;
+  let ideasLoading   = false;
   let configuredUsers = [];
-  let gender       = null;  // 'boy' | 'girl' | null
-  let setupGender  = null;  // selected during setup
+  let gender         = null;  // 'boy' | 'girl' | null
+  let setupGender    = null;  // selected during setup
+  // Runoff state
+  let currentRunoffId   = null;
+  let runoffPairQueue   = [];
+  let runoffData        = null;
+  let modalSelectedNames = new Set();
 
   // ── INIT ─────────────────────────────────────────────────────────
   async function init() {
@@ -1117,7 +1493,13 @@
     return res.json();
   }
 
-  async function loadNames()    { try { names = (await api('GET', '/names')).names || []; }     catch { names = []; } }
+  async function loadNames() {
+    try {
+      const data = await api('GET', '/names');
+      names = data.names || [];
+      serverNewNames = new Set(data.new_names || []);
+    } catch { names = []; serverNewNames = new Set(); }
+  }
   async function loadMyRatings(){ try { myRatings = await api('GET', `/ratings/${currentUser}`); } catch { myRatings = {}; } }
 
   async function saveMyRatings() {
@@ -1141,30 +1523,29 @@
 
   function isRated(name) { return getRating(name) !== null; }
 
-  // ── NEW NAMES (session tracking) ──────────────────────────────────
-  function getNewNames() { return new Set(JSON.parse(sessionStorage.getItem('babyapp_new_names') || '[]')); }
+  // ── NEW NAMES (server-side tracking) ─────────────────────────────
+  function getNewNames() { return serverNewNames; }
 
   function markNewNames(added) {
-    if (!added.length) return;
-    const stored = getNewNames();
-    added.forEach(n => stored.add(n));
-    sessionStorage.setItem('babyapp_new_names', JSON.stringify([...stored]));
+    added.forEach(n => serverNewNames.add(n));
   }
 
   // ── NAVIGATION ───────────────────────────────────────────────────
   function setMode(mode) {
     currentMode = mode;
-    ['rate', 'results', 'ideas', 'edit'].forEach(m =>
+    ['rate', 'results', 'ideas', 'edit', 'runoffs', 'runoff'].forEach(m =>
       document.getElementById('mode-' + m).style.display = m === mode ? 'block' : 'none'
     );
-    document.querySelectorAll('.nav-tab').forEach(t =>
-      t.classList.toggle('active', t.dataset.mode === mode)
+    document.querySelectorAll('.nav-tab').forEach(tab =>
+      tab.classList.toggle('active', tab.dataset.mode === mode || (mode === 'runoff' && tab.dataset.mode === 'runoffs'))
     );
     document.getElementById('edit-btn').classList.toggle('active', mode === 'edit');
     if (mode === 'rate')    renderRate();
     if (mode === 'results') renderResults();
     if (mode === 'ideas')   renderIdeas();
     if (mode === 'edit')    renderEdit();
+    if (mode === 'runoffs') renderRunoffs();
+    if (mode === 'runoff')  renderRunoffDetail();
   }
 
   // ── RATE MODE ─────────────────────────────────────────────────────
@@ -1293,6 +1674,15 @@
           <div class="result-ratings">${ratingsHtml}</div>
         </div>`;
       }).join('');
+      // Add "Start runoff" button at the bottom of results
+      const startRunoffBtn = document.createElement('button');
+      startRunoffBtn.className = 'runoff-new-btn';
+      startRunoffBtn.style.marginTop = '20px';
+      startRunoffBtn.style.width = '100%';
+      startRunoffBtn.style.justifyContent = 'center';
+      startRunoffBtn.textContent = t('runoffStartBtn');
+      startRunoffBtn.onclick = () => openCreateRunoffModal();
+      el.appendChild(startRunoffBtn);
     } catch (e) {
       el.innerHTML = `<div class="empty"><p>${t('resultsError')}${esc(e.message)}</p></div>`;
     }
@@ -1388,6 +1778,250 @@
     } catch (e) { showToast(t('editSaveError') + e.message); }
   }
 
+  // ── RUNOFFS ───────────────────────────────────────────────────────
+  async function renderRunoffs() {
+    const el = document.getElementById('runoffs-list');
+    el.innerHTML = `<div class="spinner-wrap"><span class="spinner">⏳</span></div>`;
+    try {
+      const runoffs = await api('GET', '/runoffs');
+      if (runoffs.length === 0) {
+        el.innerHTML = `<div class="empty">
+          <div class="e-icon">🏆</div>
+          <h3>${t('runoffEmptyTitle')}</h3>
+          <p>${t('runoffEmptyDesc')}</p>
+        </div>`;
+        return;
+      }
+      el.innerHTML = runoffs.slice().reverse().map(r => {
+        const statusLabel = t(r.status === 'completed' ? 'runoffCompleted' : 'runoffActive');
+        const progressHtml = configuredUsers.map(u => {
+          const done = r.user_progress[u] ?? 0;
+          const pct  = Math.min(100, Math.round(done / r.rounds_required * 100));
+          return `<div class="runoff-user-progress">
+            <span>${esc(u)}</span>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill ${done >= r.rounds_required ? 'done' : ''}" style="width:${pct}%"></div>
+            </div>
+            <span class="progress-label">${done}/${r.rounds_required}</span>
+          </div>`;
+        }).join('');
+        return `<div class="runoff-card ${r.status}" data-rid="${escAttr(r.id)}">
+          <div class="runoff-card-top">
+            <span class="runoff-card-title">${esc(r.names.slice(0,4).join(', '))}${r.names.length > 4 ? ' …' : ''}</span>
+            <span class="runoff-status-badge ${r.status}">${statusLabel}</span>
+          </div>
+          <div class="runoff-card-meta">${t('runoffCardMeta', r.name_count)}</div>
+          <div class="runoff-progress-bars">${progressHtml}</div>
+        </div>`;
+      }).join('');
+      el.querySelectorAll('.runoff-card').forEach(card => {
+        card.addEventListener('click', () => openRunoff(card.dataset.rid));
+      });
+    } catch (e) {
+      el.innerHTML = `<div class="empty"><p>${esc(e.message)}</p></div>`;
+    }
+  }
+
+  async function openRunoff(id) {
+    currentRunoffId = id;
+    runoffData = null;
+    runoffPairQueue = [];
+    setMode('runoff');
+  }
+
+  async function renderRunoffDetail() {
+    if (!currentRunoffId) return;
+    const titleEl = document.getElementById('runoff-detail-title');
+    const metaEl  = document.getElementById('runoff-detail-meta');
+    const voteEl  = document.getElementById('runoff-vote-section');
+    const eloEl   = document.getElementById('runoff-elo-list');
+    voteEl.innerHTML = `<div class="spinner-wrap"><span class="spinner">⏳</span></div>`;
+    eloEl.innerHTML  = '';
+    try {
+      runoffData = await api('GET', `/runoffs/${currentRunoffId}`);
+      const r = runoffData;
+      titleEl.textContent = r.names.slice(0, 3).join(', ') + (r.names.length > 3 ? ' …' : '');
+      metaEl.textContent  = t('runoffDetailMeta', r.names.length, r.rounds_required);
+      const myVotes = (r.votes[currentUser] || []).length;
+      const allDone = configuredUsers.length > 0 && configuredUsers.every(
+        u => (r.votes[u] || []).length >= r.rounds_required
+      );
+      // Voting section
+      if (allDone) {
+        voteEl.innerHTML = `<div class="vote-section"><div class="vote-done-msg">${t('runoffAllDone')}</div></div>`;
+      } else if (myVotes >= r.rounds_required) {
+        const pct = 100;
+        voteEl.innerHTML = `<div class="vote-section">
+          <div class="vote-done-msg">${t('runoffDone')}</div>
+          <div class="vote-progress-wrap">
+            <div class="vote-progress-text">${t('runoffProgress', myVotes, r.rounds_required)}</div>
+            <div class="vote-progress-track"><div class="vote-progress-fill complete" style="width:${pct}%"></div></div>
+          </div>
+        </div>`;
+      } else {
+        renderVotePair();
+      }
+      // ELO leaderboard
+      renderEloLeaderboard(r.elo, r.names);
+    } catch (e) {
+      voteEl.innerHTML = `<div class="empty"><p>${esc(e.message)}</p></div>`;
+    }
+  }
+
+  function buildPairQueue(namesList) {
+    const pairs = [];
+    for (let i = 0; i < namesList.length; i++) {
+      for (let j = i + 1; j < namesList.length; j++) {
+        pairs.push([namesList[i], namesList[j]]);
+      }
+    }
+    // Shuffle
+    for (let i = pairs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+    }
+    return pairs;
+  }
+
+  function getNextPair() {
+    if (runoffPairQueue.length === 0) {
+      runoffPairQueue = buildPairQueue(runoffData.names);
+    }
+    return runoffPairQueue.shift();
+  }
+
+  function renderVotePair() {
+    const r = runoffData;
+    const myVotes = (r.votes[currentUser] || []).length;
+    const pct = Math.min(100, Math.round(myVotes / r.rounds_required * 100));
+    const pair = getNextPair();
+    if (!pair) return;
+    const [a, b] = pair;
+    const voteEl = document.getElementById('runoff-vote-section');
+    voteEl.innerHTML = `<div class="vote-section">
+      <div class="vote-prompt">${t('runoffVotePrompt')}</div>
+      <div class="vote-pair">
+        <button class="vote-name-btn" data-winner="${escAttr(a)}" data-loser="${escAttr(b)}">${esc(a)}</button>
+        <button class="vote-name-btn" data-winner="${escAttr(b)}" data-loser="${escAttr(a)}">${esc(b)}</button>
+      </div>
+      <div class="vote-progress-wrap">
+        <div class="vote-progress-text">${t('runoffProgress', myVotes, r.rounds_required)}</div>
+        <div class="vote-progress-track"><div class="vote-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+    voteEl.querySelectorAll('.vote-name-btn').forEach(btn => {
+      btn.addEventListener('click', () => submitVote(btn.dataset.winner, btn.dataset.loser, btn));
+    });
+  }
+
+  async function submitVote(winner, loser, btn) {
+    btn.classList.add('voted-winner');
+    btn.parentElement.querySelectorAll('.vote-name-btn').forEach(b => b.disabled = true);
+    try {
+      const res = await api('POST', `/runoffs/${currentRunoffId}/vote`, {
+        user: currentUser, winner, loser
+      });
+      // Update local runoff data
+      if (!runoffData.votes[currentUser]) runoffData.votes[currentUser] = [];
+      runoffData.votes[currentUser].push({ winner, loser });
+      runoffData.elo = res.elo;
+      const myVotes = res.votes_count;
+      const allDone = configuredUsers.length > 0 && configuredUsers.every(u => {
+        const cnt = u === currentUser ? myVotes : (runoffData.votes[u] || []).length;
+        return cnt >= res.rounds_required;
+      });
+      // Update ELO live
+      renderEloLeaderboard(res.elo, runoffData.names);
+      if (allDone) {
+        document.getElementById('runoff-vote-section').innerHTML =
+          `<div class="vote-section"><div class="vote-done-msg">${t('runoffAllDone')}</div></div>`;
+      } else if (myVotes >= res.rounds_required) {
+        const pct = 100;
+        document.getElementById('runoff-vote-section').innerHTML = `<div class="vote-section">
+          <div class="vote-done-msg">${t('runoffDone')}</div>
+          <div class="vote-progress-wrap">
+            <div class="vote-progress-text">${t('runoffProgress', myVotes, res.rounds_required)}</div>
+            <div class="vote-progress-track"><div class="vote-progress-fill complete" style="width:${pct}%"></div></div>
+          </div>
+        </div>`;
+      } else {
+        setTimeout(() => renderVotePair(), 350);
+      }
+    } catch {
+      showToast(t('runoffVoteError'));
+      btn.classList.remove('voted-winner');
+      btn.parentElement.querySelectorAll('.vote-name-btn').forEach(b => b.disabled = false);
+    }
+  }
+
+  function renderEloLeaderboard(elo, namesList) {
+    const el = document.getElementById('runoff-elo-list');
+    const sorted = [...namesList].sort((a, b) => (elo[b] || 1000) - (elo[a] || 1000));
+    el.innerHTML = sorted.map((name, i) => {
+      const rank = i + 1;
+      const rankClass = rank <= 3 ? `rank-${rank}` : '';
+      const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+      return `<div class="elo-card">
+        <div class="elo-rank ${rankClass}">${medal}</div>
+        <div class="elo-name">${esc(name)}</div>
+        <div class="elo-score">${Math.round(elo[name] || 1000)} Pkt.</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── CREATE RUNOFF MODAL ───────────────────────────────────────────
+  function openCreateRunoffModal() {
+    modalSelectedNames = new Set();
+    const listEl = document.getElementById('modal-name-list');
+    listEl.innerHTML = names.map(n => `
+      <div class="modal-name-item" data-name="${escAttr(n)}">
+        <div class="modal-name-check">✓</div>
+        ${esc(n)}
+      </div>`).join('');
+    listEl.querySelectorAll('.modal-name-item').forEach(item => {
+      item.addEventListener('click', () => toggleModalName(item, item.dataset.name));
+    });
+    updateModalConfirmBtn();
+    document.getElementById('runoff-modal').style.display = 'flex';
+  }
+
+  function toggleModalName(item, name) {
+    if (modalSelectedNames.has(name)) {
+      modalSelectedNames.delete(name);
+      item.classList.remove('selected');
+    } else {
+      modalSelectedNames.add(name);
+      item.classList.add('selected');
+    }
+    updateModalConfirmBtn();
+  }
+
+  function updateModalConfirmBtn() {
+    const btn = document.getElementById('modal-confirm-btn');
+    const n = modalSelectedNames.size;
+    btn.disabled = n < 2;
+    btn.textContent = n >= 2 ? t('modalConfirm', n) : t('modalConfirm', 0);
+  }
+
+  function closeRunoffModal() {
+    document.getElementById('runoff-modal').style.display = 'none';
+  }
+
+  async function confirmCreateRunoff() {
+    const namesList = [...modalSelectedNames];
+    if (namesList.length < 2) { showToast(t('modalMinError')); return; }
+    try {
+      const runoff = await api('POST', '/runoffs', { names: namesList });
+      closeRunoffModal();
+      currentRunoffId = runoff.id;
+      runoffData = null;
+      runoffPairQueue = [];
+      setMode('runoff');
+    } catch (e) {
+      showToast(t('runoffCreateError') + ': ' + e.message);
+    }
+  }
+
   // ── USER MANAGEMENT ───────────────────────────────────────────────
   function selectUser(name) {
     if (!configuredUsers.includes(name)) return;
@@ -1459,6 +2093,29 @@
   document.getElementById('switch-btn').addEventListener('click', switchUser);
   document.getElementById('ideas-refresh-btn').addEventListener('click', () => renderIdeas(true));
   document.getElementById('save-names-btn').addEventListener('click', saveNames);
+
+  // Runoff events
+  document.getElementById('runoff-new-btn').addEventListener('click', openCreateRunoffModal);
+  document.getElementById('runoff-back-btn').addEventListener('click', () => setMode('runoffs'));
+  document.getElementById('modal-cancel-btn').addEventListener('click', closeRunoffModal);
+  document.getElementById('modal-confirm-btn').addEventListener('click', confirmCreateRunoff);
+  document.getElementById('modal-select-all').addEventListener('click', () => {
+    const allSelected = modalSelectedNames.size === names.length;
+    const listEl = document.getElementById('modal-name-list');
+    if (allSelected) {
+      modalSelectedNames.clear();
+      listEl.querySelectorAll('.modal-name-item').forEach(i => i.classList.remove('selected'));
+      document.getElementById('modal-select-all').textContent = t('modalSelectAll');
+    } else {
+      names.forEach(n => modalSelectedNames.add(n));
+      listEl.querySelectorAll('.modal-name-item').forEach(i => i.classList.add('selected'));
+      document.getElementById('modal-select-all').textContent = t('modalDeselectAll');
+    }
+    updateModalConfirmBtn();
+  });
+  document.getElementById('runoff-modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('runoff-modal')) closeRunoffModal();
+  });
 
   // ── START ─────────────────────────────────────────────────────────
   init();

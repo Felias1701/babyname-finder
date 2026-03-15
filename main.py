@@ -1,5 +1,7 @@
 import json
 import os
+import uuid
+from datetime import datetime
 from pathlib import Path
 
 import anthropic
@@ -16,14 +18,14 @@ DATA_FILE = Path("data/names.json")
 def load_data() -> dict:
     if not DATA_FILE.exists():
         DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-        default = {"names": [], "ratings": {}, "users": []}
+        default = {"names": [], "ratings": {}, "users": [], "new_names": [], "runoffs": []}
         save_data(default)
         return default
     try:
         with open(DATA_FILE, encoding="utf-8") as f:
             return json.load(f)
     except (json.JSONDecodeError, OSError):
-        default = {"names": [], "ratings": {}, "users": []}
+        default = {"names": [], "ratings": {}, "users": [], "new_names": [], "runoffs": []}
         save_data(default)
         return default
 
@@ -47,6 +49,16 @@ class UsersPayload(BaseModel):
     gender: str | None = None  # "boy" or "girl"
 
 
+class RunoffPayload(BaseModel):
+    names: list[str]
+
+
+class VotePayload(BaseModel):
+    user: str
+    winner: str
+    loser: str
+
+
 def normalize_rating(r) -> int | None:
     """Convert rating to int (1-5) or None (unrated).
     Handles both new {rating: int} format and legacy {star, heart} format."""
@@ -68,6 +80,19 @@ def normalize_rating(r) -> int | None:
             return 3
         return None
     return None
+
+
+def calculate_elo(winner_rating: float, loser_rating: float, k: int = 32) -> tuple[float, float]:
+    expected_winner = 1 / (1 + 10 ** ((loser_rating - winner_rating) / 400))
+    expected_loser = 1 - expected_winner
+    new_winner = winner_rating + k * (1 - expected_winner)
+    new_loser = loser_rating + k * (0 - expected_loser)
+    return new_winner, new_loser
+
+
+def get_rounds_required(n: int) -> int:
+    pairs = n * (n - 1) // 2
+    return max(5, min(30, pairs))
 
 
 # ── API routes ────────────────────────────────────────────────────────────────
@@ -100,15 +125,21 @@ def post_users(payload: UsersPayload):
 @app.get("/api/names")
 def get_names():
     data = load_data()
-    return {"names": data.get("names", [])}
+    return {"names": data.get("names", []), "new_names": data.get("new_names", [])}
 
 
 @app.post("/api/names")
 def post_names(payload: NamesPayload):
     data = load_data()
-    data["names"] = [n.strip() for n in payload.names if n.strip()]
+    old_names = set(data.get("names", []))
+    new_names_list = [n.strip() for n in payload.names if n.strip()]
+    added = [n for n in new_names_list if n not in old_names]
+    data["names"] = new_names_list
+    current_new = set(data.get("new_names", []))
+    current_new.update(added)
+    data["new_names"] = list(current_new)
     save_data(data)
-    return {"ok": True, "names": data["names"]}
+    return {"ok": True, "names": data["names"], "new_names": data["new_names"]}
 
 
 @app.get("/api/ratings/{user}")
@@ -127,6 +158,17 @@ def post_ratings(user: str, payload: RatingsPayload):
     if "ratings" not in data:
         data["ratings"] = {}
     data["ratings"][user] = payload.ratings
+    # Remove from new_names if all users have now rated this name
+    users = data.get("users", [])
+    new_names = set(data.get("new_names", []))
+    to_remove = set()
+    for name in list(new_names):
+        if all(
+            normalize_rating(data["ratings"].get(u, {}).get(name)) is not None
+            for u in users
+        ):
+            to_remove.add(name)
+    data["new_names"] = list(new_names - to_remove)
     save_data(data)
     return {"ok": True}
 
@@ -174,6 +216,7 @@ def get_suggestions():
 
     data = load_data()
     ratings: dict = data.get("ratings", {})
+    existing_names = {n.lower() for n in data.get("names", [])}
 
     favorites: set[str] = set()
     for user_ratings in ratings.values():
@@ -201,11 +244,121 @@ def get_suggestions():
             ],
         )
         suggestions = json.loads(message.content[0].text)
-        return {"suggestions": suggestions}
+        # Filter out names already in the list
+        filtered = [s for s in suggestions if (s.get("name") or "").lower() not in existing_names]
+        return {"suggestions": filtered}
     except json.JSONDecodeError:
         raise HTTPException(status_code=500, detail="Ungültige KI-Antwort")
     except anthropic.APIError as e:
         raise HTTPException(status_code=502, detail=f"KI-Fehler: {str(e)}")
+
+
+# ── Runoff routes ──────────────────────────────────────────────────────────────
+
+@app.get("/api/runoffs")
+def get_runoffs():
+    data = load_data()
+    runoffs = data.get("runoffs", [])
+    users = data.get("users", [])
+    result = []
+    changed = False
+    for r in runoffs:
+        votes = r.get("votes", {})
+        rounds_req = r.get("rounds_required", 10)
+        user_progress = {u: len(votes.get(u, [])) for u in users}
+        all_done = bool(users) and all(user_progress.get(u, 0) >= rounds_req for u in users)
+        new_status = "completed" if all_done else "active"
+        if r.get("status") != new_status:
+            r["status"] = new_status
+            changed = True
+        result.append({
+            "id": r["id"],
+            "created_at": r["created_at"],
+            "names": r["names"],
+            "name_count": len(r["names"]),
+            "rounds_required": rounds_req,
+            "user_progress": user_progress,
+            "status": new_status,
+        })
+    if changed:
+        save_data(data)
+    return result
+
+
+@app.post("/api/runoffs")
+def create_runoff(payload: RunoffPayload):
+    names = [n.strip() for n in payload.names if n.strip()]
+    if len(names) < 2:
+        raise HTTPException(status_code=400, detail="Mindestens 2 Namen erforderlich")
+    data = load_data()
+    if "runoffs" not in data:
+        data["runoffs"] = []
+    runoff_id = str(uuid.uuid4())[:8]
+    rounds_req = get_rounds_required(len(names))
+    runoff = {
+        "id": runoff_id,
+        "created_at": datetime.utcnow().isoformat(),
+        "names": names,
+        "rounds_required": rounds_req,
+        "votes": {u: [] for u in data.get("users", [])},
+        "elo": {n: 1000.0 for n in names},
+        "status": "active",
+    }
+    data["runoffs"].append(runoff)
+    save_data(data)
+    return runoff
+
+
+@app.get("/api/runoffs/{runoff_id}")
+def get_runoff(runoff_id: str):
+    data = load_data()
+    for r in data.get("runoffs", []):
+        if r["id"] == runoff_id:
+            return r
+    raise HTTPException(status_code=404, detail="Stichwahl nicht gefunden")
+
+
+@app.post("/api/runoffs/{runoff_id}/vote")
+def post_vote(runoff_id: str, payload: VotePayload):
+    data = load_data()
+    runoff = next((r for r in data.get("runoffs", []) if r["id"] == runoff_id), None)
+    if not runoff:
+        raise HTTPException(status_code=404, detail="Stichwahl nicht gefunden")
+    if payload.user not in data.get("users", []):
+        raise HTTPException(status_code=400, detail="Ungültiger Benutzer")
+    if payload.winner not in runoff["names"] or payload.loser not in runoff["names"]:
+        raise HTTPException(status_code=400, detail="Ungültige Namen")
+
+    if payload.user not in runoff["votes"]:
+        runoff["votes"][payload.user] = []
+    runoff["votes"][payload.user].append({
+        "winner": payload.winner,
+        "loser": payload.loser,
+        "ts": datetime.utcnow().isoformat(),
+    })
+
+    elo = runoff.get("elo", {n: 1000.0 for n in runoff["names"]})
+    w_r = elo.get(payload.winner, 1000.0)
+    l_r = elo.get(payload.loser, 1000.0)
+    new_w, new_l = calculate_elo(w_r, l_r)
+    elo[payload.winner] = new_w
+    elo[payload.loser] = new_l
+    runoff["elo"] = elo
+
+    users = data.get("users", [])
+    rounds_req = runoff.get("rounds_required", 10)
+    all_done = bool(users) and all(len(runoff["votes"].get(u, [])) >= rounds_req for u in users)
+    if all_done:
+        runoff["status"] = "completed"
+
+    save_data(data)
+    return {
+        "ok": True,
+        "votes_count": len(runoff["votes"].get(payload.user, [])),
+        "rounds_required": rounds_req,
+        "elo": elo,
+        "status": runoff.get("status", "active"),
+    }
 
 
 # ── Static files (must be last) ───────────────────────────────────────────────
