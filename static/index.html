@@ -1247,9 +1247,9 @@
 
   let lang = localStorage.getItem('babyapp_lang') || null;
 
-  function t(key, arg) {
+  function t(key, ...args) {
     const entry = (T[lang] || T.de)[key];
-    return typeof entry === 'function' ? entry(arg) : (entry ?? key);
+    return typeof entry === 'function' ? entry(...args) : (entry ?? key);
   }
 
   function setLang(l) {
