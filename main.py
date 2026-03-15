@@ -57,6 +57,7 @@ class VotePayload(BaseModel):
     user: str
     winner: str
     loser: str
+    draw: bool = False
 
 
 def normalize_rating(r) -> int | None:
@@ -340,7 +341,13 @@ def post_vote(runoff_id: str, payload: VotePayload):
     elo = runoff.get("elo", {n: 1000.0 for n in runoff["names"]})
     w_r = elo.get(payload.winner, 1000.0)
     l_r = elo.get(payload.loser, 1000.0)
-    new_w, new_l = calculate_elo(w_r, l_r)
+    if payload.draw:
+        k = 32
+        exp_w = 1 / (1 + 10 ** ((l_r - w_r) / 400))
+        new_w = w_r + k * (0.5 - exp_w)
+        new_l = l_r + k * (0.5 - (1 - exp_w))
+    else:
+        new_w, new_l = calculate_elo(w_r, l_r)
     elo[payload.winner] = new_w
     elo[payload.loser] = new_l
     runoff["elo"] = elo

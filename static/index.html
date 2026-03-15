@@ -766,6 +766,17 @@
       100% { transform: scale(1); }
     }
 
+    .vote-draw-btn {
+      display: block; margin: 0 auto;
+      padding: 9px 22px; border-radius: 20px;
+      border: 2px solid var(--border); background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .vote-draw-btn:hover { border-color: var(--muted); color: var(--text); background: #F0EAE4; }
+    .vote-draw-btn:active { transform: scale(0.97); }
+
     .vote-progress-wrap { margin-top: 6px; }
 
     .vote-progress-text {
@@ -1138,6 +1149,7 @@
       runoffBackLabel:   'Alle Stichwahlen',
       runoffDetailMeta:  (n, rq) => `${n} Namen · ${rq} Runden pro Person`,
       runoffVotePrompt:  'Welcher Name gefällt dir besser?',
+      runoffDraw:        'Gleich gut',
       runoffProgress:    (done, total) => `${done} von ${total} Runden abgeschlossen`,
       runoffDone:        '\u2713 Du hast alle deine Runden abgeschlossen!',
       runoffAllDone:     '\uD83C\uDF89 Alle haben gewählt \u2013 Ergebnisse stehen fest!',
@@ -1228,6 +1240,7 @@
       runoffBackLabel:   'All Runoffs',
       runoffDetailMeta:  (n, rq) => `${n} names · ${rq} rounds per person`,
       runoffVotePrompt:  'Which name do you prefer?',
+      runoffDraw:        'Equally good',
       runoffProgress:    (done, total) => `${done} of ${total} rounds completed`,
       runoffDone:        '\u2713 You have completed all your rounds!',
       runoffAllDone:     '\uD83C\uDF89 Everyone has voted \u2013 results are final!',
@@ -1922,26 +1935,31 @@
         <button class="vote-name-btn" data-winner="${escAttr(a)}" data-loser="${escAttr(b)}">${esc(a)}</button>
         <button class="vote-name-btn" data-winner="${escAttr(b)}" data-loser="${escAttr(a)}">${esc(b)}</button>
       </div>
-      <div class="vote-progress-wrap">
+      <button class="vote-draw-btn" data-draw-a="${escAttr(a)}" data-draw-b="${escAttr(b)}">${t('runoffDraw')}</button>
+      <div class="vote-progress-wrap" style="margin-top:14px">
         <div class="vote-progress-text">${t('runoffProgress', myVotes, r.rounds_required)}</div>
         <div class="vote-progress-track"><div class="vote-progress-fill" style="width:${pct}%"></div></div>
       </div>
     </div>`;
     voteEl.querySelectorAll('.vote-name-btn').forEach(btn => {
-      btn.addEventListener('click', () => submitVote(btn.dataset.winner, btn.dataset.loser, btn));
+      btn.addEventListener('click', () => submitVote(btn.dataset.winner, btn.dataset.loser, btn, false));
+    });
+    voteEl.querySelector('.vote-draw-btn').addEventListener('click', (e) => {
+      const btn = e.currentTarget;
+      submitVote(btn.dataset.drawA, btn.dataset.drawB, btn, true);
     });
   }
 
-  async function submitVote(winner, loser, btn) {
-    btn.classList.add('voted-winner');
-    btn.parentElement.querySelectorAll('.vote-name-btn').forEach(b => b.disabled = true);
+  async function submitVote(winner, loser, btn, draw) {
+    if (!draw) btn.classList.add('voted-winner');
+    btn.closest('.vote-section').querySelectorAll('button').forEach(b => b.disabled = true);
     try {
       const res = await api('POST', `/runoffs/${currentRunoffId}/vote`, {
-        user: currentUser, winner, loser
+        user: currentUser, winner, loser, draw: !!draw
       });
       // Update local runoff data
       if (!runoffData.votes[currentUser]) runoffData.votes[currentUser] = [];
-      runoffData.votes[currentUser].push({ winner, loser });
+      runoffData.votes[currentUser].push({ winner, loser, draw: !!draw });
       runoffData.elo = res.elo;
       const myVotes = res.votes_count;
       const allDone = configuredUsers.length > 0 && configuredUsers.every(u => {
@@ -1968,7 +1986,7 @@
     } catch {
       showToast(t('runoffVoteError'));
       btn.classList.remove('voted-winner');
-      btn.parentElement.querySelectorAll('.vote-name-btn').forEach(b => b.disabled = false);
+      btn.closest('.vote-section').querySelectorAll('button').forEach(b => b.disabled = false);
     }
   }
 
