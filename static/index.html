@@ -880,6 +880,16 @@
     }
     .modal-name-item.selected .modal-name-check { opacity: 1; }
 
+    .modal-name-ratings {
+      margin-left: auto; display: flex; flex-direction: column;
+      align-items: flex-end; gap: 2px; flex-shrink: 0;
+    }
+    .modal-name-rating-row {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; color: var(--muted);
+    }
+    .modal-name-rating-row .stars { font-size: 11px; letter-spacing: 0.5px; }
+
     .modal-footer { display: flex; gap: 10px; }
 
     .modal-cancel-btn {
@@ -1970,19 +1980,43 @@
   }
 
   // ── CREATE RUNOFF MODAL ───────────────────────────────────────────
-  function openCreateRunoffModal() {
+  async function openCreateRunoffModal() {
     modalSelectedNames = new Set();
     const listEl = document.getElementById('modal-name-list');
-    listEl.innerHTML = names.map(n => `
-      <div class="modal-name-item" data-name="${escAttr(n)}">
+    listEl.innerHTML = `<div class="spinner-wrap" style="padding:20px"><span class="spinner">⏳</span></div>`;
+    document.getElementById('runoff-modal').style.display = 'flex';
+
+    let results = [];
+    try { results = await api('GET', '/results'); } catch { results = names.map(n => ({ name: n })); }
+
+    // Sort by results order (already sorted by server), build ratings map
+    const orderedNames = results.map(r => r.name).filter(n => names.includes(n));
+    // Add any names not in results (unrated)
+    names.forEach(n => { if (!orderedNames.includes(n)) orderedNames.push(n); });
+
+    listEl.innerHTML = orderedNames.map(n => {
+      const item = results.find(r => r.name === n) || { name: n };
+      const ratingsHtml = configuredUsers.map(u => {
+        const v = item[u] ?? null;
+        const stars = v !== null
+          ? `<span style="color:#F4C430">${'★'.repeat(v)}</span><span style="color:#D4C5B0">${'☆'.repeat(5-v)}</span>`
+          : `<span style="color:#D4C5B0">–</span>`;
+        return `<div class="modal-name-rating-row">
+          <span>${esc(u)}</span>
+          <span class="stars">${stars}</span>
+        </div>`;
+      }).join('');
+      return `<div class="modal-name-item" data-name="${escAttr(n)}">
         <div class="modal-name-check">✓</div>
-        ${esc(n)}
-      </div>`).join('');
+        <span style="flex:1">${esc(n)}</span>
+        <div class="modal-name-ratings">${ratingsHtml}</div>
+      </div>`;
+    }).join('');
+
     listEl.querySelectorAll('.modal-name-item').forEach(item => {
       item.addEventListener('click', () => toggleModalName(item, item.dataset.name));
     });
     updateModalConfirmBtn();
-    document.getElementById('runoff-modal').style.display = 'flex';
   }
 
   function toggleModalName(item, name) {
