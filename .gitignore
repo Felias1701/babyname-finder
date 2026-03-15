@@ -1,0 +1,9 @@
+babynamen.tar.gz
+babynamen.tar
+*.tar
+*.tar.gz
+.env
+data/names.json
+.venv/
+CLAUDE.md
+CLAUDE.md

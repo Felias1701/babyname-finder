@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Babynames 🍼</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #FAF8F4;
+      --blue:        #4A6FA5;
+      --blue-dark:   #2E4F7E;
+      --blue-light:  #EEF3FB;
+      --terra:       #C4623A;
+      --apricot:     #E8855A;
+      --apricot-lt:  #FFF0E8;
+      --text:        #1E1B16;
+      --muted:       #8C8278;
+      --card:        #FFFFFF;
+      --border:      #E5DDD6;
+      --shadow:      0 2px 14px rgba(0,0,0,0.07);
+      --shadow-lg:   0 8px 36px rgba(0,0,0,0.13);
+      --r:           16px;
+      --r-sm:        10px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── LANG / SETUP / START SCREEN ─────────────────── */
+    #lang-screen,
+    #setup-screen,
+    #start-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #EEF3FB 0%, #FAF8F4 45%, #FFF0E8 100%);
+      padding: 24px;
+    }
+
+    .start-card {
+      background: var(--card);
+      border-radius: 28px;
+      padding: 52px 44px 44px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      animation: float-in 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes float-in {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .start-icon {
+      font-size: 64px;
+      display: block;
+      margin-bottom: 20px;
+      animation: bob 3s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50%       { transform: translateY(-8px) rotate(3deg); }
+    }
+
+    .start-card h1 {
+      font-family: 'Comfortaa', cursive;
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 6px;
+    }
+
+    .start-subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+
+    .start-question {
+      font-family: 'Comfortaa', cursive;
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .user-buttons { display: flex; flex-direction: column; gap: 12px; }
+
+    .user-btn {
+      padding: 20px 24px;
+      border-radius: 14px;
+      border: none;
+      font-family: 'Comfortaa', cursive;
+      font-size: 21px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .user-btn:active { transform: scale(0.97) !important; }
+
+    .user-btn-blue   { background: #4A6FA5; color: #fff; }
+    .user-btn-blue:hover   { background: #2E4F7E; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(74,111,165,0.38); }
+
+    .user-btn-terra  { background: #C4623A; color: #fff; }
+    .user-btn-terra:hover  { background: #A84F2A; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(196,98,58,0.38); }
+
+    .user-btn-green  { background: #4CAF50; color: #fff; }
+    .user-btn-green:hover  { background: #388E3C; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(76,175,80,0.38); }
+
+    .user-btn-purple { background: #7E57C2; color: #fff; }
+    .user-btn-purple:hover { background: #5E35B1; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(126,87,194,0.38); }
+
+    .user-btn-teal   { background: #26A69A; color: #fff; }
+    .user-btn-teal:hover   { background: #00796B; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(38,166,154,0.38); }
+
+    .user-btn-amber  { background: #F59E0B; color: #fff; }
+    .user-btn-amber:hover  { background: #D97706; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(245,158,11,0.38); }
+
+    /* ── LANG SCREEN ─────────────────────────────────── */
+    .lang-hint {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* ── GENDER SELECT ───────────────────────────────── */
+    .setup-gender-label {
+      font-family: 'Comfortaa', cursive;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 20px 0 10px;
+      text-align: left;
+    }
+
+    .gender-select { display: flex; gap: 12px; width: 100%; margin-bottom: 4px; }
+
+    .gender-btn {
+      flex: 1;
+      padding: 16px 10px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      font-family: 'Comfortaa', cursive;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s, color 0.18s;
+      color: var(--text);
+    }
+
+    .gender-btn:hover { border-color: var(--blue); }
+    .gender-btn.selected-boy  { border-color: #4A6FA5; background: #EEF3FB; color: #2E4F7E; }
+    .gender-btn.selected-girl { border-color: #C4623A; background: #FFF0E8; color: #A84F2A; }
+
+    /* ── SETUP FORM ──────────────────────────────────── */
+    .setup-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .setup-input-row { display: flex; gap: 8px; align-items: center; }
+
+    .setup-name-input {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: var(--r-sm);
+      border: 2px solid var(--border);
+      background: var(--card);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .setup-name-input:focus { border-color: var(--blue); }
+
+    .setup-remove-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%; border: none;
+      background: #F0EAE4;
+      color: var(--muted); font-size: 13px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .setup-remove-btn:hover { background: #E8DDD6; color: var(--text); }
+
+    .setup-add-btn {
+      width: 100%; padding: 12px;
+      border-radius: var(--r-sm);
+      border: 2px dashed var(--border);
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: var(--muted); cursor: pointer;
+      display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+      transition: border-color 0.2s, color 0.2s;
+      margin-bottom: 4px;
+    }
+
+    .setup-add-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    .setup-error {
+      color: var(--terra); font-size: 13px;
+      min-height: 18px; text-align: left;
+      margin-top: 6px;
+    }
+
+    /* ── APP ────────────────────────────────────────── */
+    #app { display: none; min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    }
+
+    .nav-brand {
+      font-family: 'Comfortaa', cursive;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--blue-dark);
+      white-space: nowrap;
+      margin-right: 6px;
+    }
+
+    .nav-tabs { display: flex; gap: 4px; flex: 1; }
+
+    .nav-tab {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover { background: var(--blue-light); color: var(--blue); }
+    .nav-tab.active { background: var(--blue); color: #fff; }
+
+    .nav-settings {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      border: none;
+      background: none;
+      font-size: 19px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      color: var(--muted);
+    }
+
+    .nav-settings:hover { background: var(--blue-light); }
+    .nav-settings.active { background: var(--blue-light); color: var(--blue); }
+
+    .nav-user {
+      display: flex; align-items: center; gap: 8px;
+      margin-left: auto;
+      font-size: 13px; color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .nav-user strong { color: var(--text); font-weight: 600; }
+
+    .nav-switch {
+      padding: 4px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: none;
+      font-size: 12px; color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .nav-switch:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* CONTENT */
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    .section-title {
+      font-family: 'Comfortaa', cursive;
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 18px;
+    }
+
+    /* ── RATE MODE ──────────────────────────────────── */
+    .name-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .name-card {
+      background: var(--card);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+      border: 2px solid transparent;
+      transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+      gap: 10px;
+    }
+
+    .name-card[data-rating="5"] { border-color: #F5C8BB; }
+    .name-card[data-rating="4"] { border-color: #F4D87A; }
+    .name-card[data-rating="3"] { border-color: #FAE89A; }
+    .name-card[data-rating="2"] { border-color: #E8F0D8; }
+    .name-card[data-rating="1"] { border-color: #E0EBF5; }
+
+    .name-card.rated {
+      background: #F3F1EE;
+      box-shadow: none;
+      opacity: 0.8;
+    }
+
+    .name-card.rated .name-text { color: var(--muted); }
+
+    .rated-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 18px 0 12px;
+      color: var(--muted); font-size: 13px; font-weight: 500;
+    }
+
+    .rated-divider::before,
+    .rated-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .name-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .name-text {
+      font-family: 'Comfortaa', cursive;
+      font-size: 21px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: #D4EDDA;
+      color: #1A6B31;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    /* ── STAR RATING ─────────────────────────────────── */
+    .rating-stars {
+      display: flex;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      font-size: 26px;
+      cursor: pointer;
+      color: #D4C5B0;
+      padding: 4px 3px;
+      line-height: 1;
+      transition: color 0.12s, transform 0.1s;
+    }
+
+    .star-btn.filled { color: #F4C430; }
+    .star-btn:hover  { transform: scale(1.2); }
+    .star-btn:active { transform: scale(0.9); }
+
+    @keyframes star-pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.35); }
+      100% { transform: scale(1); }
+    }
+
+    .star-btn.popping { animation: star-pop 0.3s cubic-bezier(0.22,1,0.36,1); }
+
+    .reset-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 15px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .reset-btn:hover { background: #F0EAE4; color: var(--text); }
+
+    /* ── RESULTS MODE ───────────────────────────────── */
+    .result-card {
+      background: var(--card);
+      border-radius: var(--r);
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid transparent;
+    }
+
+    .result-card.lvl-0 { border-left-color: var(--terra); background: linear-gradient(135deg,#FFF8F5,#fff); }
+    .result-card.lvl-1 { border-left-color: var(--apricot); }
+    .result-card.lvl-2 { border-left-color: var(--blue); }
+    .result-card.lvl-3 { border-left-color: #A8C0E0; }
+    .result-card.lvl-4 { opacity: 0.6; }
+
+    .result-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .result-name {
+      font-family: 'Comfortaa', cursive;
+      font-size: 23px; font-weight: 700;
+      color: var(--text);
+    }
+
+    .match-badge {
+      font-size: 12px; font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #FFE4DA; color: var(--terra);
+      white-space: nowrap;
+    }
+
+    .result-ratings { display: flex; gap: 18px; flex-wrap: wrap; }
+
+    .result-user {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; color: var(--muted);
+    }
+
+    .result-user strong { color: var(--text); font-weight: 600; }
+
+    .result-stars { font-size: 15px; letter-spacing: 1px; }
+
+    /* ── EDIT MODE ──────────────────────────────────── */
+    .edit-desc {
+      color: var(--muted); font-size: 14px;
+      line-height: 1.6; margin-bottom: 16px;
+    }
+
+    .names-textarea {
+      width: 100%; min-height: 320px;
+      padding: 16px;
+      border-radius: var(--r-sm);
+      border: 2px solid var(--border);
+      background: var(--card);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px; line-height: 1.9;
+      color: var(--text);
+      resize: vertical; outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .names-textarea:focus { border-color: var(--blue); }
+
+    .save-btn {
+      width: 100%; margin-top: 12px;
+      padding: 16px;
+      border-radius: var(--r-sm);
+      border: none;
+      background: var(--blue); color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.18s;
+    }
+
+    .save-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .save-btn:active { transform: scale(0.98); }
+
+    .save-msg {
+      text-align: center; margin-top: 10px;
+      font-size: 14px; font-weight: 500;
+      color: #4CAF50;
+      height: 20px;
+    }
+
+    /* ── IDEAS / SUGGESTIONS MODE ───────────────────── */
+    .ideas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .ideas-refresh-btn {
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--apricot);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: background 0.18s, transform 0.18s;
+      white-space: nowrap;
+    }
+
+    .ideas-refresh-btn:hover { background: var(--terra); transform: translateY(-1px); }
+    .ideas-refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .suggestion-card {
+      background: var(--card);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .suggestion-card.already-added { border-color: #C8E6C9; background: #F9FFF9; }
+
+    .suggestion-info { flex: 1; min-width: 0; }
+
+    .suggestion-name {
+      font-family: 'Comfortaa', cursive;
+      font-size: 21px; font-weight: 700;
+      color: var(--text); margin-bottom: 4px;
+    }
+
+    .suggestion-reason { font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+    .add-btn {
+      padding: 9px 14px;
+      border-radius: 8px; border: none;
+      background: var(--blue); color: #fff;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      transition: background 0.15s, transform 0.15s;
+      flex-shrink: 0;
+    }
+
+    .add-btn:hover { background: var(--blue-dark); }
+    .add-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+    .add-btn.added { background: #4CAF50; cursor: default; }
+
+    /* ── EMPTY STATE ────────────────────────────────── */
+    .empty { text-align: center; padding: 64px 20px; color: var(--muted); }
+    .empty .e-icon { font-size: 52px; margin-bottom: 16px; }
+    .empty h3 { font-family: 'Comfortaa', cursive; font-size: 20px; color: var(--blue-dark); margin-bottom: 8px; }
+    .empty p { font-size: 14px; line-height: 1.5; }
+
+    /* ── SPINNER / LOADING ──────────────────────────── */
+    .spinner-wrap { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+    .spinner { display: inline-block; font-size: 32px; animation: spin 1s linear infinite; margin-bottom: 12px; }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── TOAST ──────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      background: #2C2816; color: #fff;
+      padding: 12px 22px; border-radius: 12px;
+      font-size: 14px; font-weight: 500;
+      z-index: 300; white-space: nowrap;
+      animation: toast-in 0.28s ease;
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(14px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 420px) {
+      .start-card { padding: 36px 24px 32px; }
+      .nav-brand { display: none; }
+      .name-text { font-size: 18px; }
+      .result-name { font-size: 20px; }
+      .nav-user { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LANGUAGE SCREEN ───────────────────────────────────────────── -->
+<div id="lang-screen" style="display:none">
+  <div class="start-card">
+    <span class="start-icon">🍼</span>
+    <h1 style="margin-bottom:10px">Babynames</h1>
+    <p class="lang-hint">Wähle deine Sprache<br>Choose your language</p>
+    <div class="user-buttons">
+      <button class="user-btn user-btn-blue" id="lang-btn-de">🇩🇪 Deutsch</button>
+      <button class="user-btn user-btn-terra" id="lang-btn-en">🇬🇧 English</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETUP SCREEN ──────────────────────────────────────────────── -->
+<div id="setup-screen" style="display:none">
+  <div class="start-card">
+    <span class="start-icon">👶</span>
+    <h1 id="setup-title"></h1>
+    <p class="start-subtitle" id="setup-subtitle"></p>
+    <div class="setup-inputs" id="setup-inputs"></div>
+    <button class="setup-add-btn" id="setup-add-btn"></button>
+    <p class="setup-gender-label" id="setup-gender-label"></p>
+    <div class="gender-select">
+      <button class="gender-btn" id="gender-btn-boy"></button>
+      <button class="gender-btn" id="gender-btn-girl"></button>
+    </div>
+    <button class="save-btn" id="setup-save-btn"></button>
+    <p class="setup-error" id="setup-error"></p>
+  </div>
+</div>
+
+<!-- ── START SCREEN ──────────────────────────────────────────────── -->
+<div id="start-screen" style="display:none">
+  <div class="start-card">
+    <span class="start-icon">🍼</span>
+    <h1 id="start-title"></h1>
+    <p class="start-subtitle" id="start-subtitle"></p>
+    <p class="start-question" id="start-question"></p>
+    <div class="user-buttons" id="user-buttons-container"></div>
+  </div>
+</div>
+
+<!-- ── APP ───────────────────────────────────────────────────────── -->
+<div id="app">
+  <nav>
+    <span class="nav-brand" id="nav-brand"></span>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-mode="rate" id="nav-tab-rate"></button>
+      <button class="nav-tab" data-mode="results" id="nav-tab-results"></button>
+      <button class="nav-tab" data-mode="ideas" id="nav-tab-ideas"></button>
+    </div>
+    <button class="nav-settings" id="edit-btn">⚙️</button>
+    <button class="nav-settings" id="lang-toggle-btn" style="font-size:22px"></button>
+    <div class="nav-user">
+      <strong id="username-display"></strong>
+      <button class="nav-switch" id="switch-btn"></button>
+    </div>
+  </nav>
+
+  <!-- Rate -->
+  <div id="mode-rate" class="content">
+    <h2 class="section-title" id="rate-title"></h2>
+    <div id="names-list" class="name-list"></div>
+  </div>
+
+  <!-- Results -->
+  <div id="mode-results" class="content" style="display:none">
+    <h2 class="section-title" id="results-title" style="margin-bottom:18px"></h2>
+    <div id="results-list"></div>
+  </div>
+
+  <!-- Ideas / AI Suggestions -->
+  <div id="mode-ideas" class="content" style="display:none">
+    <div class="ideas-header">
+      <h2 class="section-title" id="ideas-title" style="margin-bottom:0"></h2>
+      <button class="ideas-refresh-btn" id="ideas-refresh-btn"></button>
+    </div>
+    <div id="ideas-list"></div>
+  </div>
+
+  <!-- Edit -->
+  <div id="mode-edit" class="content" style="display:none">
+    <h2 class="section-title" id="edit-title"></h2>
+    <p class="edit-desc" id="edit-desc"></p>
+    <textarea class="names-textarea" id="names-input"></textarea>
+    <button class="save-btn" id="save-names-btn"></button>
+    <div class="save-msg" id="save-msg"></div>
+  </div>
+</div>
+
+<script>
+  // ── TRANSLATIONS ─────────────────────────────────────────────────
+  const T = {
+    de: {
+      // Setup
+      setupTitle:        'Willkommen!',
+      setupSubtitle:     'Wer macht beim Babynames-Voting mit?\nFüge 1\u20136 Teilnehmer hinzu.',
+      setupAddPerson:    '+ Person hinzufügen',
+      setupGo:           'Loslegen \u2192',
+      setupErrEmpty:     'Bitte mindestens einen Namen eingeben.',
+      setupErrDuplicate: 'Namen müssen eindeutig sein.',
+      setupErrSave:      'Fehler: ',
+      setupNamePh:       (i) => `Name ${i}`,
+      setupRemoveTitle:  'Entfernen',
+      setupGenderLabel:  'Es wird ein …',
+      setupGenderBoy:    '👦 Junge',
+      setupGenderGirl:   '👧 Mädchen',
+      setupErrGender:    'Bitte Junge oder Mädchen auswählen.',
+      // Start
+      startTitle:        'Babynames',
+      startSubtitle:     'Euer Baby kommt bald\u2009\u2013\u2009welcher Name wird es sein? \uD83D\uDC76',
+      startSubtitleBoy:  'Euer Junge kommt bald\u2009\u2013\u2009welcher Name wird es sein? \uD83D\uDC66',
+      startSubtitleGirl: 'Euer Mädchen kommt bald\u2009\u2013\u2009welcher Name wird es sein? \uD83D\uDC67',
+      startQuestion:     'Wer bist du?',
+      // Nav
+      navBrand:          '\uD83C\uDF7C Babynames',
+      navRate:           'Bewerten',
+      navResults:        'Ergebnisse',
+      navIdeas:          '\u2728 Ideen',
+      navEditTitle:      'Namen bearbeiten',
+      navSwitch:         'Wechseln',
+      navLangTitle:      'Sprache wechseln',
+      // Rate
+      rateTitle:         'Namen bewerten',
+      rateEmptyTitle:    'Noch keine Namen',
+      rateEmptyDesc:     'Füge Namen über das ⚙️-Menü hinzu.',
+      ratedDivider:      'Bereits bewertet',
+      resetTitle:        'Bewertung zurücksetzen',
+      newBadge:          'NEU',
+      // Results
+      resultsTitle:      'Ergebnisse',
+      resultsLoading:    'Lade Ergebnisse\u2026',
+      resultsEmptyTitle: 'Noch keine Bewertungen',
+      resultsEmptyDesc:  'Bewertet zuerst einige Namen!',
+      resultsError:      'Fehler beim Laden: ',
+      perfectMatch:      '\uD83D\uDC9E Perfect Match!',
+      // Ideas
+      ideasTitle:        '\u2728 KI-Ideen',
+      ideasRefresh:      '\u21BA Neu laden',
+      ideasLoading:      'KI denkt nach\u2026',
+      ideasUnavailTitle: 'KI nicht verfügbar',
+      ideasNone:         'Keine Vorschläge verfügbar.',
+      // Edit
+      editTitle:         'Namen bearbeiten',
+      editDesc:          'Füge Namen ein \u2013 einen pro Zeile. Alle sehen dieselbe Liste.',
+      editPlaceholder:   'Leon\nEmil\nFelix\n...',
+      editSaveBtn:       'Speichern',
+      editSaved:         '\u2713 Gespeichert!',
+      editSaveError:     'Fehler beim Speichern: ',
+      // Actions
+      addBtn:            '+ Hinzufügen',
+      addedBtn:          '\u2713 Hinzugefügt',
+      alreadyPresent:    '\u2713 Vorhanden',
+      addToast:          (n) => `"${n}" hinzugefügt \u2713`,
+      addError:          'Fehler beim Hinzufügen',
+      saveRatingError:   'Fehler beim Speichern \u26A0\uFE0F',
+    },
+    en: {
+      // Setup
+      setupTitle:        'Welcome!',
+      setupSubtitle:     "Who's joining the baby name vote?\nAdd 1\u20136 participants.",
+      setupAddPerson:    '+ Add person',
+      setupGo:           "Let's go \u2192",
+      setupErrEmpty:     'Please enter at least one name.',
+      setupErrDuplicate: 'Names must be unique.',
+      setupErrSave:      'Error: ',
+      setupNamePh:       (i) => `Name ${i}`,
+      setupRemoveTitle:  'Remove',
+      setupGenderLabel:  "It's a …",
+      setupGenderBoy:    '👦 Boy',
+      setupGenderGirl:   '👧 Girl',
+      setupErrGender:    'Please select boy or girl.',
+      // Start
+      startTitle:        'Babynames',
+      startSubtitle:     'Your baby is coming soon\u2009\u2013\u2009which name will it be? \uD83D\uDC76',
+      startSubtitleBoy:  'Your boy is coming soon\u2009\u2013\u2009which name will it be? \uD83D\uDC66',
+      startSubtitleGirl: 'Your girl is coming soon\u2009\u2013\u2009which name will it be? \uD83D\uDC67',
+      startQuestion:     'Who are you?',
+      // Nav
+      navBrand:          '\uD83C\uDF7C Babynames',
+      navRate:           'Rate',
+      navResults:        'Results',
+      navIdeas:          '\u2728 Ideas',
+      navEditTitle:      'Edit names',
+      navSwitch:         'Switch',
+      navLangTitle:      'Change language',
+      // Rate
+      rateTitle:         'Rate names',
+      rateEmptyTitle:    'No names yet',
+      rateEmptyDesc:     'Add names via the ⚙️ menu.',
+      ratedDivider:      'Already rated',
+      resetTitle:        'Reset rating',
+      newBadge:          'NEW',
+      // Results
+      resultsTitle:      'Results',
+      resultsLoading:    'Loading results\u2026',
+      resultsEmptyTitle: 'No ratings yet',
+      resultsEmptyDesc:  'Rate some names first!',
+      resultsError:      'Error loading: ',
+      perfectMatch:      '\uD83D\uDC9E Perfect Match!',
+      // Ideas
+      ideasTitle:        '\u2728 AI Ideas',
+      ideasRefresh:      '\u21BA Reload',
+      ideasLoading:      'AI is thinking\u2026',
+      ideasUnavailTitle: 'AI not available',
+      ideasNone:         'No suggestions available.',
+      // Edit
+      editTitle:         'Edit names',
+      editDesc:          'Add names \u2013 one per line. Everyone sees the same list.',
+      editPlaceholder:   'Leon\nEmil\nFelix\n...',
+      editSaveBtn:       'Save',
+      editSaved:         '\u2713 Saved!',
+      editSaveError:     'Error saving: ',
+      // Actions
+      addBtn:            '+ Add',
+      addedBtn:          '\u2713 Added',
+      alreadyPresent:    '\u2713 Already added',
+      addToast:          (n) => `"${n}" added \u2713`,
+      addError:          'Error adding name',
+      saveRatingError:   'Error saving \u26A0\uFE0F',
+    },
+  };
+
+  let lang = localStorage.getItem('babyapp_lang') || null;
+
+  function t(key, arg) {
+    const entry = (T[lang] || T.de)[key];
+    return typeof entry === 'function' ? entry(arg) : (entry ?? key);
+  }
+
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem('babyapp_lang', l);
+    document.documentElement.lang = l;
+    applyTranslations();
+  }
+
+  function applyTranslations() {
+    // Setup screen
+    document.getElementById('setup-title').textContent        = t('setupTitle');
+    document.getElementById('setup-subtitle').textContent     = t('setupSubtitle');
+    document.getElementById('setup-add-btn').textContent      = t('setupAddPerson');
+    document.getElementById('setup-save-btn').textContent     = t('setupGo');
+    document.getElementById('setup-gender-label').textContent = t('setupGenderLabel');
+    document.getElementById('gender-btn-boy').textContent     = t('setupGenderBoy');
+    document.getElementById('gender-btn-girl').textContent    = t('setupGenderGirl');
+    // Start screen
+    document.getElementById('start-title').textContent        = t('startTitle');
+    const subtitleKey = gender === 'boy' ? 'startSubtitleBoy'
+                      : gender === 'girl' ? 'startSubtitleGirl'
+                      : 'startSubtitle';
+    document.getElementById('start-subtitle').textContent     = t(subtitleKey);
+    document.getElementById('start-question').textContent     = t('startQuestion');
+    // Nav
+    document.getElementById('nav-brand').textContent          = t('navBrand');
+    document.getElementById('nav-tab-rate').textContent       = t('navRate');
+    document.getElementById('nav-tab-results').textContent    = t('navResults');
+    document.getElementById('nav-tab-ideas').textContent      = t('navIdeas');
+    document.getElementById('edit-btn').title                 = t('navEditTitle');
+    document.getElementById('switch-btn').textContent         = t('navSwitch');
+    const ltBtn = document.getElementById('lang-toggle-btn');
+    ltBtn.textContent = lang === 'en' ? '🇬🇧' : '🇩🇪';
+    ltBtn.title       = t('navLangTitle');
+    // Modes
+    document.getElementById('rate-title').textContent         = t('rateTitle');
+    document.getElementById('results-title').textContent      = t('resultsTitle');
+    document.getElementById('ideas-title').textContent        = t('ideasTitle');
+    document.getElementById('ideas-refresh-btn').textContent  = t('ideasRefresh');
+    document.getElementById('edit-title').textContent         = t('editTitle');
+    document.getElementById('edit-desc').textContent          = t('editDesc');
+    document.getElementById('names-input').placeholder        = t('editPlaceholder');
+    document.getElementById('save-names-btn').textContent     = t('editSaveBtn');
+    // Setup input placeholders (if visible)
+    document.querySelectorAll('.setup-name-input').forEach((inp, i) => {
+      inp.placeholder = t('setupNamePh', i + 1);
+    });
+    // Remove button titles
+    document.querySelectorAll('.setup-remove-btn').forEach(btn => {
+      btn.title = t('setupRemoveTitle');
+    });
+  }
+
+  // ── STATE ────────────────────────────────────────────────────────
+  let currentUser  = null;
+  let currentMode  = 'rate';
+  let names        = [];
+  let myRatings    = {};
+  let ideasCache   = null;
+  let ideasLoading = false;
+  let configuredUsers = [];
+  let gender       = null;  // 'boy' | 'girl' | null
+  let setupGender  = null;  // selected during setup
+
+  // ── INIT ─────────────────────────────────────────────────────────
+  async function init() {
+    if (!lang) {
+      showLangScreen();
+      return;
+    }
+    applyTranslations();
+    await continueInit();
+  }
+
+  async function continueInit() {
+    try {
+      const data = await api('GET', '/users');
+      configuredUsers = data.users || [];
+      gender = data.gender || null;
+    } catch {
+      configuredUsers = [];
+      gender = null;
+    }
+    applyTranslations();
+
+    if (configuredUsers.length === 0) {
+      showSetupScreen();
+      return;
+    }
+
+    const stored = localStorage.getItem('babyapp_user');
+    if (stored && configuredUsers.includes(stored)) {
+      currentUser = stored;
+      await loadAndShowApp();
+    } else {
+      showStartScreen();
+    }
+  }
+
+  // ── SCREEN HELPERS ────────────────────────────────────────────────
+  function showLangScreen() {
+    document.getElementById('lang-screen').style.display   = 'flex';
+    document.getElementById('setup-screen').style.display  = 'none';
+    document.getElementById('start-screen').style.display  = 'none';
+    document.getElementById('app').style.display           = 'none';
+  }
+
+  function showSetupScreen() {
+    document.getElementById('lang-screen').style.display   = 'none';
+    document.getElementById('setup-screen').style.display  = 'flex';
+    document.getElementById('start-screen').style.display  = 'none';
+    document.getElementById('app').style.display           = 'none';
+    initSetupInputs();
+  }
+
+  function showStartScreen() {
+    document.getElementById('lang-screen').style.display   = 'none';
+    document.getElementById('setup-screen').style.display  = 'none';
+    document.getElementById('start-screen').style.display  = 'flex';
+    document.getElementById('app').style.display           = 'none';
+    renderUserButtons();
+  }
+
+  async function loadAndShowApp() {
+    document.getElementById('lang-screen').style.display   = 'none';
+    document.getElementById('setup-screen').style.display  = 'none';
+    document.getElementById('start-screen').style.display  = 'none';
+    document.getElementById('app').style.display           = 'block';
+    document.getElementById('username-display').textContent = currentUser;
+    await Promise.all([loadNames(), loadMyRatings()]);
+    setMode(currentMode);
+  }
+
+  function renderUserButtons() {
+    const colors = ['blue', 'terra', 'green', 'purple', 'teal', 'amber'];
+    const container = document.getElementById('user-buttons-container');
+    container.innerHTML = configuredUsers.map((user, i) =>
+      `<button class="user-btn user-btn-${colors[i % colors.length]}" data-user="${escAttr(user)}">${esc(user)}</button>`
+    ).join('');
+    container.querySelectorAll('.user-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectUser(btn.dataset.user));
+    });
+  }
+
+  // ── SETUP SCREEN ─────────────────────────────────────────────────
+  function initSetupInputs() {
+    document.getElementById('setup-inputs').innerHTML  = '';
+    document.getElementById('setup-error').textContent = '';
+    document.getElementById('setup-add-btn').style.display = 'flex';
+    setupGender = null;
+    document.getElementById('gender-btn-boy').classList.remove('selected-boy');
+    document.getElementById('gender-btn-girl').classList.remove('selected-girl');
+    addSetupInput();
+    addSetupInput();
+  }
+
+  function addSetupInput() {
+    const container = document.getElementById('setup-inputs');
+    const count = container.querySelectorAll('.setup-name-input').length;
+    if (count >= 6) return;
+
+    const row = document.createElement('div');
+    row.className = 'setup-input-row';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'setup-name-input';
+    input.placeholder = t('setupNamePh', count + 1);
+    input.maxLength = 30;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'setup-remove-btn';
+    removeBtn.title = t('setupRemoveTitle');
+    removeBtn.textContent = '✕';
+    removeBtn.addEventListener('click', () => {
+      row.remove();
+      updateSetupRemoveButtons();
+      updateSetupAddButton();
+      container.querySelectorAll('.setup-name-input').forEach((inp, i) => {
+        inp.placeholder = t('setupNamePh', i + 1);
+      });
+    });
+
+    row.appendChild(input);
+    row.appendChild(removeBtn);
+    container.appendChild(row);
+
+    if (count + 1 >= 6) {
+      document.getElementById('setup-add-btn').style.display = 'none';
+    }
+    updateSetupRemoveButtons();
+    input.focus();
+  }
+
+  function updateSetupRemoveButtons() {
+    const container = document.getElementById('setup-inputs');
+    const rows = container.querySelectorAll('.setup-input-row');
+    rows.forEach(row => {
+      const btn = row.querySelector('.setup-remove-btn');
+      if (btn) btn.style.display = rows.length <= 1 ? 'none' : 'flex';
+    });
+  }
+
+  function updateSetupAddButton() {
+    const count = document.getElementById('setup-inputs').querySelectorAll('.setup-name-input').length;
+    document.getElementById('setup-add-btn').style.display = count >= 6 ? 'none' : 'flex';
+  }
+
+  async function saveSetupUsers() {
+    const inputs = document.querySelectorAll('.setup-name-input');
+    const users  = [...inputs].map(inp => inp.value.trim()).filter(Boolean);
+    const errorEl = document.getElementById('setup-error');
+
+    if (users.length === 0) { errorEl.textContent = t('setupErrEmpty'); return; }
+    if (new Set(users.map(u => u.toLowerCase())).size !== users.length) {
+      errorEl.textContent = t('setupErrDuplicate');
+      return;
+    }
+    if (!setupGender) { errorEl.textContent = t('setupErrGender'); return; }
+    errorEl.textContent = '';
+
+    try {
+      await api('POST', '/users', { users, gender: setupGender });
+      configuredUsers = users;
+      gender = setupGender;
+      applyTranslations();
+      showStartScreen();
+    } catch (e) {
+      errorEl.textContent = t('setupErrSave') + e.message;
+    }
+  }
+
+  // ── API HELPERS ───────────────────────────────────────────────────
+  async function api(method, path, body) {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    const res = await fetch('/api' + path, opts);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  async function loadNames()    { try { names = (await api('GET', '/names')).names || []; }     catch { names = []; } }
+  async function loadMyRatings(){ try { myRatings = await api('GET', `/ratings/${currentUser}`); } catch { myRatings = {}; } }
+
+  async function saveMyRatings() {
+    try { await api('POST', `/ratings/${currentUser}`, { ratings: myRatings }); }
+    catch { showToast(t('saveRatingError')); }
+  }
+
+  // ── RATING HELPERS ────────────────────────────────────────────────
+  function getRating(name) {
+    const r = myRatings[name];
+    if (r === null || r === undefined) return null;
+    if (typeof r === 'number') return r;
+    if (typeof r === 'object') {
+      if ('rating' in r) return r.rating ?? null;
+      if (r.heart) return 3;
+      if (r.star)  return 2;
+      return null;
+    }
+    return null;
+  }
+
+  function isRated(name) { return getRating(name) !== null; }
+
+  // ── NEW NAMES (session tracking) ──────────────────────────────────
+  function getNewNames() { return new Set(JSON.parse(sessionStorage.getItem('babyapp_new_names') || '[]')); }
+
+  function markNewNames(added) {
+    if (!added.length) return;
+    const stored = getNewNames();
+    added.forEach(n => stored.add(n));
+    sessionStorage.setItem('babyapp_new_names', JSON.stringify([...stored]));
+  }
+
+  // ── NAVIGATION ───────────────────────────────────────────────────
+  function setMode(mode) {
+    currentMode = mode;
+    ['rate', 'results', 'ideas', 'edit'].forEach(m =>
+      document.getElementById('mode-' + m).style.display = m === mode ? 'block' : 'none'
+    );
+    document.querySelectorAll('.nav-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.mode === mode)
+    );
+    document.getElementById('edit-btn').classList.toggle('active', mode === 'edit');
+    if (mode === 'rate')    renderRate();
+    if (mode === 'results') renderResults();
+    if (mode === 'ideas')   renderIdeas();
+    if (mode === 'edit')    renderEdit();
+  }
+
+  // ── RATE MODE ─────────────────────────────────────────────────────
+  function renderRate() {
+    const el = document.getElementById('names-list');
+    if (names.length === 0) {
+      el.innerHTML = `<div class="empty">
+        <div class="e-icon">📝</div>
+        <h3>${t('rateEmptyTitle')}</h3>
+        <p>${t('rateEmptyDesc')}</p>
+      </div>`;
+      return;
+    }
+
+    const newNameSet  = getNewNames();
+    const sorted      = [...names].sort((a, b) => a.localeCompare(b, 'de'));
+    const rated       = sorted.filter(n =>  isRated(n));
+    const unrated     = sorted.filter(n => !isRated(n));
+    const newUnrated  = unrated.filter(n =>  newNameSet.has(n));
+    const oldUnrated  = unrated.filter(n => !newNameSet.has(n));
+    const orderedUnrated = [...newUnrated, ...oldUnrated];
+
+    const items = [
+      ...orderedUnrated.map(n => ({ name: n, isRated: false, isNew: newNameSet.has(n) })),
+      ...(rated.length > 0 ? [{ divider: true }] : []),
+      ...rated.map(n => ({ name: n, isRated: true, isNew: newNameSet.has(n) })),
+    ];
+
+    let idx = 0;
+    el.innerHTML = items.map(item => {
+      if (item.divider) return `<div class="rated-divider">${t('ratedDivider')}</div>`;
+      const { name, isRated: rated, isNew } = item;
+      const rv = getRating(name);
+      const i  = idx++;
+      const newBadge = isNew ? `<span class="new-badge">${t('newBadge')}</span>` : '';
+      const stars    = [1,2,3,4,5].map(v =>
+        `<button class="star-btn ${rv !== null && v <= rv ? 'filled' : ''}" data-i="${i}" data-v="${v}">★</button>`
+      ).join('');
+      const resetBtn = rated
+        ? `<button class="reset-btn" data-reset="${i}" title="${t('resetTitle')}">↩</button>`
+        : '';
+      return `<div class="name-card ${rated ? 'rated' : ''}" id="nc-${i}" data-rating="${rv ?? ''}">
+        <div class="name-info">${newBadge}<span class="name-text">${esc(name)}</span></div>
+        <div class="rating-stars">${stars}</div>
+        ${resetBtn}
+      </div>`;
+    }).join('');
+
+    el._nameOrder = [...orderedUnrated, ...rated];
+    el.onclick = (e) => {
+      const reset = e.target.closest('.reset-btn');
+      if (reset) { resetRating(el._nameOrder[parseInt(reset.dataset.reset, 10)]); return; }
+      const btn = e.target.closest('.star-btn');
+      if (!btn) return;
+      setRating(el._nameOrder[parseInt(btn.dataset.i, 10)], parseInt(btn.dataset.v, 10), parseInt(btn.dataset.i, 10));
+    };
+  }
+
+  async function setRating(name, value, idx) {
+    const newVal = (getRating(name) === value) ? null : value;
+    myRatings[name] = { rating: newVal };
+
+    document.querySelectorAll(`.star-btn[data-i="${idx}"]`).forEach(btn => {
+      btn.classList.toggle('filled', newVal !== null && parseInt(btn.dataset.v, 10) <= newVal);
+    });
+    const card = document.getElementById(`nc-${idx}`);
+    if (card) card.dataset.rating = newVal ?? '';
+
+    const clicked = document.querySelector(`.star-btn[data-i="${idx}"][data-v="${value}"]`);
+    if (clicked) { clicked.classList.remove('popping'); void clicked.offsetWidth; clicked.classList.add('popping'); }
+
+    setTimeout(() => renderRate(), 700);
+    await saveMyRatings();
+  }
+
+  async function resetRating(name) {
+    myRatings[name] = { rating: null };
+    renderRate();
+    await saveMyRatings();
+  }
+
+  // ── RESULTS MODE ──────────────────────────────────────────────────
+  function ratingIcon(v) {
+    if (v === null || v === undefined) return '<span style="color:var(--muted)">–</span>';
+    return `<span style="color:#F4C430;letter-spacing:1px">${'★'.repeat(v)}</span>`
+         + `<span style="color:#D4C5B0;letter-spacing:1px">${'☆'.repeat(5 - v)}</span>`;
+  }
+
+  async function renderResults() {
+    const el = document.getElementById('results-list');
+    el.innerHTML = `<div class="spinner-wrap"><span class="spinner">⏳</span><br>${t('resultsLoading')}</div>`;
+    try {
+      const results = await api('GET', '/results');
+      if (results.length === 0) {
+        el.innerHTML = `<div class="empty">
+          <div class="e-icon">📊</div>
+          <h3>${t('resultsEmptyTitle')}</h3>
+          <p>${t('resultsEmptyDesc')}</p>
+        </div>`;
+        return;
+      }
+      const users = configuredUsers;
+      el.innerHTML = results.map(item => {
+        const userVals  = users.map(u => item[u] ?? null);
+        const ratedVals = userVals.filter(v => v !== null);
+        let lvl = 4;
+        if (ratedVals.length > 0) {
+          const combined    = ratedVals.reduce((a, b) => a + b, 0);
+          const maxCombined = 5 * users.length;
+          if (ratedVals.length === users.length) {
+            if      (combined >= maxCombined)            lvl = 0;
+            else if (combined >= maxCombined * 0.7)      lvl = 1;
+            else if (combined >= maxCombined * 0.5)      lvl = 2;
+            else                                         lvl = 3;
+          } else lvl = 3;
+        }
+        const perfectMatch = users.length > 1 && userVals.every(v => v === 5);
+        const badge        = perfectMatch ? `<span class="match-badge">${t('perfectMatch')}</span>` : '';
+        const ratingsHtml  = users.map(u => `
+          <div class="result-user">
+            <strong>${esc(u)}:</strong>
+            <span class="result-stars">${ratingIcon(item[u] ?? null)}</span>
+          </div>`).join('');
+        return `<div class="result-card lvl-${lvl}">
+          <div class="result-top"><span class="result-name">${esc(item.name)}</span>${badge}</div>
+          <div class="result-ratings">${ratingsHtml}</div>
+        </div>`;
+      }).join('');
+    } catch (e) {
+      el.innerHTML = `<div class="empty"><p>${t('resultsError')}${esc(e.message)}</p></div>`;
+    }
+  }
+
+  // ── IDEAS / AI SUGGESTIONS MODE ───────────────────────────────────
+  async function renderIdeas(forceReload = false) {
+    if (forceReload) ideasCache = null;
+    const el         = document.getElementById('ideas-list');
+    const refreshBtn = document.getElementById('ideas-refresh-btn');
+    if (ideasLoading) return;
+    if (ideasCache !== null) { renderIdeasList(ideasCache); return; }
+
+    ideasLoading = true;
+    refreshBtn.disabled = true;
+    el.innerHTML = `<div class="spinner-wrap"><span class="spinner">✨</span><br>${t('ideasLoading')}</div>`;
+
+    try {
+      ideasCache = (await api('POST', '/suggestions')).suggestions || [];
+      renderIdeasList(ideasCache);
+    } catch (e) {
+      el.innerHTML = `<div class="empty">
+        <div class="e-icon">😔</div>
+        <h3>${t('ideasUnavailTitle')}</h3>
+        <p>${esc(e.message)}</p>
+      </div>`;
+    } finally {
+      ideasLoading = false;
+      refreshBtn.disabled = false;
+    }
+  }
+
+  function renderIdeasList(suggestions) {
+    const el = document.getElementById('ideas-list');
+    if (suggestions.length === 0) {
+      el.innerHTML = `<div class="empty"><p>${t('ideasNone')}</p></div>`;
+      return;
+    }
+    el.innerHTML = suggestions.map((s, i) => {
+      const alreadyAdded = names.includes(s.name || '');
+      return `<div class="suggestion-card ${alreadyAdded ? 'already-added' : ''}" id="sc-${i}">
+        <div class="suggestion-info">
+          <div class="suggestion-name">${esc(s.name || '')}</div>
+          <div class="suggestion-reason">${esc(s.reason || '')}</div>
+        </div>
+        <button class="add-btn ${alreadyAdded ? 'added' : ''}"
+          data-sug-idx="${i}" data-sug-name="${escAttr(s.name || '')}"
+          ${alreadyAdded ? 'disabled' : ''}>
+          ${alreadyAdded ? t('alreadyPresent') : t('addBtn')}
+        </button>
+      </div>`;
+    }).join('');
+    el.querySelectorAll('.add-btn:not([disabled])').forEach(btn => {
+      btn.onclick = () => addSuggestion(btn);
+    });
+  }
+
+  async function addSuggestion(btn) {
+    const name = btn.dataset.sugName;
+    if (!name || names.includes(name)) {
+      btn.textContent = t('alreadyPresent'); btn.classList.add('added'); btn.disabled = true; return;
+    }
+    const newNames = [...names, name];
+    try {
+      await api('POST', '/names', { names: newNames });
+      const prev = new Set(names);
+      names = newNames;
+      markNewNames(newNames.filter(n => !prev.has(n)));
+      btn.textContent = t('addedBtn'); btn.classList.add('added'); btn.disabled = true;
+      btn.closest('.suggestion-card')?.classList.add('already-added');
+      showToast(t('addToast', name));
+    } catch { showToast(t('addError')); }
+  }
+
+  // ── EDIT MODE ─────────────────────────────────────────────────────
+  async function renderEdit() {
+    await loadNames();
+    document.getElementById('names-input').value   = names.join('\n');
+    document.getElementById('save-msg').textContent = '';
+  }
+
+  async function saveNames() {
+    const newNames = document.getElementById('names-input').value
+      .split('\n').map(s => s.trim()).filter(Boolean);
+    try {
+      const prev = new Set(names);
+      await api('POST', '/names', { names: newNames });
+      markNewNames(newNames.filter(n => !prev.has(n)));
+      names = newNames;
+      const msg = document.getElementById('save-msg');
+      msg.textContent = t('editSaved');
+      setTimeout(() => { msg.textContent = ''; }, 2500);
+    } catch (e) { showToast(t('editSaveError') + e.message); }
+  }
+
+  // ── USER MANAGEMENT ───────────────────────────────────────────────
+  function selectUser(name) {
+    if (!configuredUsers.includes(name)) return;
+    currentUser = name;
+    localStorage.setItem('babyapp_user', name);
+    loadAndShowApp();
+  }
+
+  function switchUser() {
+    currentUser = null;
+    localStorage.removeItem('babyapp_user');
+    document.getElementById('app').style.display = 'none';
+    showStartScreen();
+  }
+
+  // ── UTILITIES ─────────────────────────────────────────────────────
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function escAttr(str) { return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+  function showToast(msg) {
+    document.querySelectorAll('.toast').forEach(t => t.remove());
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  // ── EVENT WIRING ──────────────────────────────────────────────────
+  document.getElementById('lang-btn-de').addEventListener('click', async () => {
+    setLang('de'); showLangScreen(); document.getElementById('lang-screen').style.display = 'none';
+    await continueInit();
+  });
+  document.getElementById('lang-btn-en').addEventListener('click', async () => {
+    setLang('en'); showLangScreen(); document.getElementById('lang-screen').style.display = 'none';
+    await continueInit();
+  });
+
+  document.getElementById('lang-toggle-btn').addEventListener('click', () => {
+    setLang(lang === 'en' ? 'de' : 'en');
+    if (currentUser) setMode(currentMode);
+  });
+
+  document.getElementById('setup-add-btn').addEventListener('click', addSetupInput);
+  document.getElementById('setup-save-btn').addEventListener('click', saveSetupUsers);
+
+  document.getElementById('gender-btn-boy').addEventListener('click', () => {
+    setupGender = 'boy';
+    document.getElementById('gender-btn-boy').classList.add('selected-boy');
+    document.getElementById('gender-btn-girl').classList.remove('selected-girl');
+  });
+  document.getElementById('gender-btn-girl').addEventListener('click', () => {
+    setupGender = 'girl';
+    document.getElementById('gender-btn-girl').classList.add('selected-girl');
+    document.getElementById('gender-btn-boy').classList.remove('selected-boy');
+  });
+
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => setMode(tab.dataset.mode));
+  });
+
+  document.getElementById('edit-btn').addEventListener('click', () => {
+    setMode(currentMode === 'edit' ? 'rate' : 'edit');
+  });
+
+  document.getElementById('switch-btn').addEventListener('click', switchUser);
+  document.getElementById('ideas-refresh-btn').addEventListener('click', () => renderIdeas(true));
+  document.getElementById('save-names-btn').addEventListener('click', saveNames);
+
+  // ── START ─────────────────────────────────────────────────────────
+  init();
+</script>
+</body>
+</html>
