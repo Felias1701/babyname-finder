@@ -4,15 +4,29 @@ on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
-  deploy:
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy via SSH
+      - name: Deploy Production via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: /usr/local/bin/deploy-babynamen.sh
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Dev via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: /usr/local/bin/deploy-babynamen-dev.sh
